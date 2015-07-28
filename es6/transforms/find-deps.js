@@ -3,6 +3,8 @@ import detective from 'detective';
 import { default as _resolve } from 'resolve';
 import { dirname } from 'path';
 import thenify from 'thenify';
+import isCoreModule from 'is-core-module';
+
 const resolve = thenify(_resolve);
 
 
@@ -23,8 +25,14 @@ export default async function findDeps(args) {
 
   for (let dep of deps) {
     const [ absPath ] = await resolve(dep, { basedir });
-    if (!(absPath in args.pl.parsedFiles)) {
-      await args.pl.appendNewFile(absPath);
+    if (isCoreModule(dep)) {
+      console.log('skipping core module ', dep);
+    } else {
+      if (!(absPath in args.pl.parsedFiles) && !absPath.endsWith('.json')) {
+
+        console.log('find dep ', dep);
+        await args.pl.appendNewFile(absPath);
+      }
     }
   }
 }

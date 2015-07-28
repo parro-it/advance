@@ -8,9 +8,30 @@ import { readFile as read } from 'mz/fs';
 import { exec } from 'shelljs';
 import { createWriteStream } from 'fs';
 
-describe('tarFiles', () => {
+describe('tarFiles', function testTarFiles() {
+  this.timeout(60000);
   it('is a function', () => {
     tarFiles.should.be.a('function');
+  });
+
+  it.only('try to pack itself', async() => {
+    const p = pipeline(
+      readFile,
+      parseAst,
+      findDeps,
+      tarFiles
+    );
+    p.parseOptions = {ecmaVersion: 5};
+    await p.appendNewFile(join(__dirname, '../node_modules/eslint/lib/api.js'));
+
+    const writeStream = createWriteStream('/tmp/itself.tar');
+
+    const fileWritten = new Promise(resolve => {
+      writeStream.on('finish', resolve);
+    });
+    p.tarFile.pipe(writeStream);
+    p.tarFile.finalize();
+    await fileWritten;
   });
 
   it('pack files to tar archive', async () => {

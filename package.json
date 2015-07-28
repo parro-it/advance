@@ -43,6 +43,7 @@
     "acorn": "^2.1.0",
     "detective": "^4.1.1",
     "detective-es6": "^1.1.2",
+    "is-core-module": "^1.0.2",
     "mz": "^2.0.0",
     "resolve": "^1.1.6",
     "tar-stream": "^1.2.1",
