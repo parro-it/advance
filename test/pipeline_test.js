@@ -15,6 +15,20 @@ describe('pipeline', ()=> {
     result.should.be.equal('LOWERCASE.JS');
   });
 
+  it('propagate exceptions', async () => {
+    const p2 = pipeline(
+      () => { throw new Error('something bad'); }
+    );
+    let message = 'no exception thrown';
+    try {
+      await p2.appendNewFile('lowercase.js');
+    } catch(err) {
+      message = err.message;
+    }
+
+    message.should.be.equal('something bad');
+  });
+
 
   it('transforms could return a promise', async () => {
     const p1 = pipeline(

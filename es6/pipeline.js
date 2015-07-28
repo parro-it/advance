@@ -1,24 +1,32 @@
-import R from 'ramda';
 
-const guardNonPromise = fn => (...args) => {
-  try {
-    const result = fn(...args);
-    return Promise.resolve( result );
-  } catch(err) {
-    console.log(err.stack); // eslint-disable-line no-console
+
+const flatten = ([first, ...rest]) => {
+  if (first === undefined) {
+    return [];
   }
+
+  if (!Array.isArray(first)) {
+    return [first, ...flatten(rest)];
+  }
+
+  return [...flatten(first), ...flatten(rest)];
 };
 
-const makePipe = R.compose(
 
-  R.map(guardNonPromise),
-  R.flatten
-
-);
-
+const pipeP = fns => async (...args) => {
+  const a = args;
+  let result = await Promise.resolve( fns[0](...a) );
+  if (fns.length === 1) {
+    return result;
+  }
+  for (let fn of fns.slice(1)) {
+    result = await Promise.resolve( fn(result) );
+  }
+  return result;
+};
 
 export default function pipeline(...transforms) {
-  const run = R.pipeP(...makePipe(transforms));
+  const run = pipeP(flatten(transforms));
 
   const pl = {
     appendNewFile(filename) {
