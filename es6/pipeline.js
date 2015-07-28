@@ -29,6 +29,7 @@ export default function pipeline(...transforms) {
 
   const pl = {
     appendNewFile(filename) {
+      this.rootFile = this.rootFile || filename;
       return run({filename, pl});
     }
 

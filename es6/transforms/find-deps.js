@@ -8,11 +8,7 @@ const resolve = thenify(_resolve);
 
 export default async function findDeps(args) {
   args.pl.parsedFiles = args.pl.parsedFiles || {};
-  /*console.dir(args.pl.parsedFiles)
-  if (args.filename in args.pl.parsedFiles) {
-    console.log(args.filename,' in args.pl.parsedFiles')
-    return;
-  }*/
+
   args.pl.parsedFiles[args.filename] = true;
 
   const deps6 = detectiveEs6(args.ast);
