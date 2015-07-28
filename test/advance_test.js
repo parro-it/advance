@@ -1,7 +1,7 @@
-import tap from 'tap';
+// import advance from '../es6/advance';
 
-tap.test('advance', t => {
-  t.ok(true, 'borscht setup');
-
-  t.end();
+describe('advance', () => {
+  it('is defined', () => {
+    (42).should.be.equal(42);
+  });
 });

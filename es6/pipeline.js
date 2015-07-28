@@ -5,7 +5,7 @@ const guardNonPromise = fn => (...args) => {
     const result = fn(...args);
     return Promise.resolve( result );
   } catch(err) {
-    console.log(err.stack);
+    console.log(err.stack); // eslint-disable-line no-console
   }
 };
 
