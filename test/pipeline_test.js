@@ -6,32 +6,28 @@ describe('pipeline', ()=> {
   });
 
 
-  it('transforms could return non-promise', (done) => {
+  it('transforms could return non-promise', async () => {
     const p2 = pipeline(
       ({filename}) => filename.toUpperCase()
     );
 
-    p2.appendNewFile('lowercase.js').then(result => {
-      result.should.be.equal('LOWERCASE.JS');
-      done();
-    });
+    const result = await p2.appendNewFile('lowercase.js');
+    result.should.be.equal('LOWERCASE.JS');
   });
 
 
-  it('transforms could return a promise', (done) => {
+  it('transforms could return a promise', async () => {
     const p1 = pipeline(
       ({filename}) => Promise.resolve(filename.toUpperCase())
     );
 
 
-    p1.appendNewFile('lowercase.js').then(result => {
-      result.should.be.equal('LOWERCASE.JS');
-      done();
-    });
+    const result = await p1.appendNewFile('lowercase.js');
+    result.should.be.equal('LOWERCASE.JS');
   });
 
 
-  it('transforms could append other files to pipeline', (done) => {
+  it('transforms could append other files to pipeline', async () => {
     const accumulator = accum => filename => accum.push(filename);
     const tolower = ({filename, pl}) => {
       if (filename === 'lowercase.js') {
@@ -47,14 +43,12 @@ describe('pipeline', ()=> {
       accumulator(results)
     );
 
-    p1.appendNewFile('lowercase.js').then( () => {
-      results.should.be.deep.equal(['ANOTHERONE.CSS', 'LOWERCASE.JS']);
-      done();
-    });
+    await p1.appendNewFile('lowercase.js');
+    results.should.be.deep.equal(['ANOTHERONE.CSS', 'LOWERCASE.JS']);
   });
 
 
-  it('pipeline accept arrays of transforms', (done) => {
+  it('pipeline accept arrays of transforms', async () => {
     const inc = amount => ({filename}) => ({filename: filename + amount});
     const p1 = pipeline(
       inc(2),
@@ -63,9 +57,7 @@ describe('pipeline', ()=> {
     );
 
 
-    p1.appendNewFile(0).then(result => {
-      result.filename.should.be.equal(42);
-      done();
-    });
+    const result = await p1.appendNewFile(0);
+    result.filename.should.be.equal(42);
   });
 });

@@ -10,16 +10,14 @@ describe('readFile', () => {
   });
 
 
-  it('add file content to results', (done) => {
+  it('add file content to results', async () => {
     const p = pipeline(
       readFile,
       toupper
     );
 
 
-    p.appendNewFile(join(__dirname, 'fixture/fixture1.txt')).then( ({content}) => {
-      content.should.be.equal('FIXTURE1 CONTENT\n');
-      done();
-    });
+    const {content} = await p.appendNewFile(join(__dirname, 'fixture/fixture1.txt'));
+    content.should.be.equal('FIXTURE1 CONTENT\n');
   });
 });

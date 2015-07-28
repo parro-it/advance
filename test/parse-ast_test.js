@@ -10,56 +10,54 @@ describe('parseAst', () => {
   });
 
 
-  it('add ast to results', (done) => {
+  it('add ast to results', async () => {
     const p = pipeline(
       readFile,
       parseAst
     );
 
 
-    p.appendNewFile(join(__dirname, 'fixture/response.js')).then( ({ast}) => {
-      ast.should.be.deep.equal({
-        type: 'Program',
-        start: 0,
-        end: 28,
-        body: [
-          {
-            type: 'ExportNamedDeclaration',
-            start: 0,
+    const {ast} = await p.appendNewFile(join(__dirname, 'fixture/response.js'));
+    ast.should.be.deep.equal({
+      type: 'Program',
+      start: 0,
+      end: 28,
+      body: [
+        {
+          type: 'ExportNamedDeclaration',
+          start: 0,
+          end: 27,
+          declaration: {
+            type: 'VariableDeclaration',
+            start: 7,
             end: 27,
-            declaration: {
-              type: 'VariableDeclaration',
-              start: 7,
-              end: 27,
-              declarations: [
-                {
-                  type: 'VariableDeclarator',
+            declarations: [
+              {
+                type: 'VariableDeclarator',
+                start: 13,
+                end: 26,
+                id: {
+                  type: 'Identifier',
                   start: 13,
+                  end: 21,
+                  name: 'response'
+                },
+                init: {
+                  type: 'Literal',
+                  start: 24,
                   end: 26,
-                  id: {
-                    type: 'Identifier',
-                    start: 13,
-                    end: 21,
-                    name: 'response'
-                  },
-                  init: {
-                    type: 'Literal',
-                    start: 24,
-                    end: 26,
-                    value: 42,
-                    raw: '42'
-                  }
+                  value: 42,
+                  raw: '42'
                 }
-              ],
-              kind: 'const'
-            },
-            specifiers: [],
-            source: null
-          }
-        ],
-        sourceType: 'module'
-      });
-      done();
+              }
+            ],
+            kind: 'const'
+          },
+          specifiers: [],
+          source: null
+        }
+      ],
+      sourceType: 'module'
     });
   });
 });
