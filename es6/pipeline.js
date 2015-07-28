@@ -1,6 +1,13 @@
 import R from 'ramda';
 
-const guardNonPromise = fn => (...args) => Promise.resolve( fn(...args) );
+const guardNonPromise = fn => (...args) => {
+  try {
+    const result = fn(...args);
+    return Promise.resolve( result );
+  } catch(err) {
+    console.log(err.stack);
+  }
+};
 
 const makePipe = R.compose(
 
