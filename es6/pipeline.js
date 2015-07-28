@@ -13,16 +13,15 @@ const flatten = ([first, ...rest]) => {
 };
 
 
-const pipeP = fns => async (...args) => {
-  const a = args;
-  let result = await Promise.resolve( fns[0](...a) );
+const pipeP = fns => async (args) => {
+  await Promise.resolve( fns[0](args) );
   if (fns.length === 1) {
-    return result;
+    return args;
   }
   for (let fn of fns.slice(1)) {
-    result = await Promise.resolve( fn(result) );
+    await Promise.resolve( fn(args) );
   }
-  return result;
+  return args;
 };
 
 export default function pipeline(...transforms) {

@@ -1,6 +1,5 @@
 import {parse} from 'acorn';
 
-export default function parseAst({filename, pl, content}) {
-  const ast = parse(content, {ecmaVersion: 6, sourceType: 'module'});
-  return {filename, pl, content, ast};
+export default async function parseAst(args) {
+  args.ast = parse(args.content, {ecmaVersion: 6, sourceType: 'module'});
 }

@@ -8,11 +8,13 @@ describe('pipeline', ()=> {
 
   it('transforms could return non-promise', async () => {
     const p2 = pipeline(
-      ({filename}) => filename.toUpperCase()
+      async (args) => {
+        args.filename = args.filename.toUpperCase();
+      }
     );
 
-    const result = await p2.appendNewFile('lowercase.js');
-    result.should.be.equal('LOWERCASE.JS');
+    const { filename } = await p2.appendNewFile('lowercase.js');
+    filename.should.be.equal('LOWERCASE.JS');
   });
 
   it('propagate exceptions', async () => {
@@ -32,22 +34,24 @@ describe('pipeline', ()=> {
 
   it('transforms could return a promise', async () => {
     const p1 = pipeline(
-      ({filename}) => Promise.resolve(filename.toUpperCase())
+      async (args) => {
+        args.filename = args.filename.toUpperCase();
+      }
     );
 
 
-    const result = await p1.appendNewFile('lowercase.js');
-    result.should.be.equal('LOWERCASE.JS');
+    const { filename } = await p1.appendNewFile('lowercase.js');
+    filename.should.be.equal('LOWERCASE.JS');
   });
 
 
   it('transforms could append other files to pipeline', async () => {
-    const accumulator = accum => filename => accum.push(filename);
-    const tolower = ({filename, pl}) => {
-      if (filename === 'lowercase.js') {
-        pl.appendNewFile('anotherone.css');
+    const accumulator = accum => ({filename}) => accum.push(filename);
+    const tolower = async (args) => {
+      if (args.filename === 'lowercase.js') {
+        await args.pl.appendNewFile('anotherone.css');
       }
-      return Promise.resolve(filename.toUpperCase());
+      args.filename = args.filename.toUpperCase();
     };
 
     const results = [];
@@ -63,7 +67,7 @@ describe('pipeline', ()=> {
 
 
   it('pipeline accept arrays of transforms', async () => {
-    const inc = amount => ({filename}) => ({filename: filename + amount});
+    const inc = amount => args => (args.filename = args.filename + amount);
     const p1 = pipeline(
       inc(2),
       [inc(5), inc(10)],

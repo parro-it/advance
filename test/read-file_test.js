@@ -2,7 +2,7 @@ import pipeline from '../es6/pipeline';
 import readFile from '../es6/transforms/read-file';
 import { join } from 'path';
 
-const toupper = ({filename, pl, content}) => ({filename, pl, content: content.toUpperCase()});
+const toupper = async (args) => (args.content = args.content.toUpperCase());
 
 describe('readFile', () => {
   it('is a function', () => {
