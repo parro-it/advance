@@ -7,6 +7,14 @@ const resolve = thenify(_resolve);
 
 
 export default async function findDeps(args) {
+  args.pl.parsedFiles = args.pl.parsedFiles || {};
+  /*console.dir(args.pl.parsedFiles)
+  if (args.filename in args.pl.parsedFiles) {
+    console.log(args.filename,' in args.pl.parsedFiles')
+    return;
+  }*/
+  args.pl.parsedFiles[args.filename] = true;
+
   const deps6 = detectiveEs6(args.ast);
   const deps5 = detective(args.content, {
     parse: {
@@ -19,7 +27,8 @@ export default async function findDeps(args) {
 
   for (let dep of deps) {
     const [ absPath ] = await resolve(dep, { basedir });
-
-    await args.pl.appendNewFile(absPath);
+    if (!(absPath in args.pl.parsedFiles)) {
+      await args.pl.appendNewFile(absPath);
+    }
   }
 }

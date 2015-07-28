@@ -42,4 +42,12 @@ describe('findDeps', () => {
         'fixture/has-deps-es5.js'
     ]);
   });
+
+  it('support recursive deps', async () => {
+    const result = await parseFile('fixture/has-recursive-deps.js');
+    result.should.be.deep.equal([
+        'fixture/recursive.js',
+        'fixture/has-recursive-deps.js'
+    ]);
+  });
 });
