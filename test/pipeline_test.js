@@ -78,4 +78,18 @@ describe('pipeline', ()=> {
     const result = await p1.appendNewFile(0);
     result.filename.should.be.equal(42);
   });
+
+  it('is fast with normal function in pipeline', async () => {
+    const inc = args => (args.filename = args.filename + 10);
+    const incs = [];
+
+    for (let i = 0; i < 5000; i++) {
+      incs.push(inc);
+    }
+    const p1 = pipeline(...incs);
+
+
+    const result = await p1.appendNewFile(0);
+    result.filename.should.be.equal(50000);
+  });
 });

@@ -13,8 +13,8 @@ describe('tarFiles', function testTarFiles() {
   it('is a function', () => {
     tarFiles.should.be.a('function');
   });
-
-  it.only('try to pack itself', async() => {
+/*
+  it('try to pack itself', async() => {
     const p = pipeline(
       readFile,
       parseAst,
@@ -33,7 +33,7 @@ describe('tarFiles', function testTarFiles() {
     p.tarFile.finalize();
     await fileWritten;
   });
-
+*/
   it('pack files to tar archive', async () => {
     const p = pipeline(
       readFile,

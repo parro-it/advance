@@ -48,4 +48,8 @@ p.appendNewFile('path/to/another/file.js');
 - [ ] compose a bundle. Evaluate tar format, json, vanilla js
 - [ ] integrate with browserify transforms
 - [ ] integrate with babel transforms
-- [ ] improve detective to avoid re-parse
+- [ ] improve detective to avoid source code re-parse (use mrjoelkemp/node-detective-cjs, it could probably replace detective6 too)
+
+- [ ] integrate mrjoelkemp/ast-module-types helpers
+- [ ] implement split and join in pipeline
+
