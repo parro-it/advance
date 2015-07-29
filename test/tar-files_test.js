@@ -7,6 +7,8 @@ import { join } from 'path';
 import { readFile as read } from 'mz/fs';
 import { exec } from 'shelljs';
 import { createWriteStream } from 'fs';
+import { transform } from 'babel-core';
+import { generate } from 'escodegen';
 
 describe('tarFiles', function testTarFiles() {
   this.timeout(60000);
@@ -55,10 +57,30 @@ describe('tarFiles', function testTarFiles() {
       writeStream.on('finish', resolve);
     });
     p.tarFile.pipe(writeStream);
-    p.tarFile.finalize();
+
     await fileWritten;
 
     const result = exec('tar -xOf /tmp/output.tar').output;
     result.should.be.equal(expectedTarContent);
+  });
+
+  it.only('allow usage of babel transforms', async () => {
+    const p = pipeline(
+      readFile,
+      parseAst,
+      findDeps,
+      ({ast, content}) => {
+        debugger
+        transform.fromAst(ast, content);
+      },
+      ({ast, content}) => {
+        const code = generate(ast);
+        console.log(code);
+      },
+      tarFiles
+    );
+
+    await p.appendNewFile(join(__dirname, 'fixture/has-deps.js'));
+
   });
 });

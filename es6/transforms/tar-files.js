@@ -10,5 +10,7 @@ export default function tarFiles(args) {
   const rootDir = dirname(args.pl.rootFile);
   const relativeFilename = relative(rootDir, args.filename);
   tarFile.entry({ name: relativeFilename }, args.content);
+
+  args.pl.on('end', () => tarFile.finalize());
 }
 

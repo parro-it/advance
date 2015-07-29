@@ -1,4 +1,4 @@
-
+import EventEmitter from 'events';
 
 const flatten = ([first, ...rest]) => {
   if (first === undefined) {
@@ -32,16 +32,29 @@ const pipeP = fns => async (args) => {
   return args;
 };
 
-export default function pipeline(...transforms) {
-  const run = pipeP(flatten(transforms));
 
-  const pl = {
-    appendNewFile(filename) {
-      this.rootFile = this.rootFile || filename;
-      return run({filename, pl});
+class Pipeline extends EventEmitter {
+
+  constructor(...transforms) {
+    super();
+    this.results = [];
+    this.run = pipeP(flatten(transforms.concat([this.collect.bind(this)])));
+  }
+
+  async collect(args) {
+    this.results.push(args);
+  }
+
+  async appendNewFile(filename) {
+    this.rootFile = this.rootFile || filename;
+    const result = await this.run({filename, pl: this});
+    if (filename === this.rootFile) {
+      this.emit('end');
     }
+    return result;
+  }
+}
 
-  };
-
-  return pl;
+export default function pipeline(...transforms) {
+  return new Pipeline(transforms);
 }

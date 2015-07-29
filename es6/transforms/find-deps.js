@@ -26,11 +26,10 @@ export default async function findDeps(args) {
   for (let dep of deps) {
     const [ absPath ] = await resolve(dep, { basedir });
     if (isCoreModule(dep)) {
-      console.log('skipping core module ', dep);
+      console.log('skipping core module ', dep);  // eslint-disable-line no-console
     } else {
       if (!(absPath in args.pl.parsedFiles) && !absPath.endsWith('.json')) {
-
-        console.log('find dep ', dep);
+        // console.log('find dep ', dep);
         await args.pl.appendNewFile(absPath);
       }
     }

@@ -17,6 +17,7 @@ describe('pipeline', ()=> {
     filename.should.be.equal('LOWERCASE.JS');
   });
 
+
   it('propagate exceptions', async () => {
     const p2 = pipeline(
       () => { throw new Error('something bad'); }
@@ -44,15 +45,16 @@ describe('pipeline', ()=> {
     filename.should.be.equal('LOWERCASE.JS');
   });
 
+  const tolower = async (args) => {
+    if (args.filename === 'lowercase.js') {
+      await args.pl.appendNewFile('anotherone.css');
+    }
+    args.filename = args.filename.toUpperCase();
+  };
 
   it('transforms could append other files to pipeline', async () => {
     const accumulator = accum => ({filename}) => accum.push(filename);
-    const tolower = async (args) => {
-      if (args.filename === 'lowercase.js') {
-        await args.pl.appendNewFile('anotherone.css');
-      }
-      args.filename = args.filename.toUpperCase();
-    };
+
 
     const results = [];
 
@@ -66,7 +68,20 @@ describe('pipeline', ()=> {
   });
 
 
-  it('pipeline accept arrays of transforms', async () => {
+  it('emit `end` event when first file complete the pipeline', async () => {
+    const p1 = pipeline(
+      tolower,
+      tolower
+    );
+
+    let eventFired = false;
+    p1.on('end', () => eventFired = true);
+    await p1.appendNewFile('lowercase.js');
+    eventFired.should.be.deep.equal(true);
+  });
+
+
+  it('accept arrays of transforms as arguments', async () => {
     const inc = amount => args => (args.filename = args.filename + amount);
     const p1 = pipeline(
       inc(2),
