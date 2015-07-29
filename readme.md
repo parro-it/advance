@@ -30,7 +30,7 @@ using file path and bundle name as key
 
 
 ## the pipeline
-
+```javascript
 const p = pipeline(
     readFile,               // { string filename, pipeline pl }  -> { string content, pipeline pl }
     parse,                  // { string content, pipeline pl } -> { string content, pipeline pl, Object ast }
@@ -41,3 +41,11 @@ const p = pipeline(
 );
 
 p.appendNewFile('path/to/another/file.js');
+```
+
+## TODO
+
+- [ ] compose a bundle. Evaluate tar format, json, vanilla js
+- [ ] integrate with browserify transforms
+- [ ] integrate with babel transforms
+- [ ] improve detective to avoid re-parse
